@@ -37,6 +37,7 @@ int main() {
   while (getline(cin, input)) {
     t = t + input;
   }
+ 
   vector<int> T; // the vector we will run SAIS on. converted string of ints
                  // where each char is represented by an int.
   for (int i = 0; i < (int)t.size(); i++) {
@@ -44,13 +45,24 @@ int main() {
   }
   T.push_back(0); // this is the equivalent of appending $ to the end
 
-}
+  
 
   // put print statement here.
 
   vector<int> SA(T.size(), -1); // suffix array
   vector<bool> type(T.size());
+
   SAIS(T, type, SA);
+
+  // //BEGINNING OF STEP 2
+  // // give each LMS-substring of T a name
+  // vector<int> T_1(SA.size);
+
+  // // scan SA from L-to-R
+  // for (int i = 0; i < (int)SA.size(); i++){
+  //   // assign lms-substrings names
+
+  // }
 
   // printing -- commenting out for now
   for (int i = 0; i < (int)SA.size(); i++) {
