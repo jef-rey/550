@@ -28,6 +28,8 @@ void fill_l(vector<int> &SA, vector<int> &T, vector<int> &l_bucket,
 void fill_s(vector<int> &SA, vector<int> &T, vector<int> &s_bucket2,
             vector<bool> &type);
 
+void SAIS(vector<int> &T, vector<bool> &type, vector<int> &SA);
+
 int main() {
   // string T = "ROADSTARCAT$";
   string input;
@@ -35,7 +37,6 @@ int main() {
   while (getline(cin, input)) {
     t = t + input;
   }
-  vector<int> counts(256, 0);
   vector<int> T; // the vector we will run SAIS on. converted string of ints
                  // where each char is represented by an int.
   for (int i = 0; i < (int)t.size(); i++) {
@@ -43,34 +44,19 @@ int main() {
   }
   T.push_back(0); // this is the equivalent of appending $ to the end
 
-  for (int i = 0; i < (int)T.size(); i++) { // detecting numbers in T
-    counts[T[i]]++;
-  }
+}
 
   // put print statement here.
 
-  vector<int> SA(T.size(), -1);  // suffix array
-  vector<int> s_bucket(257, -1); // bucket for s-type
-  vector<int> s_bucket2(
-      257, -1); // bucket for s-type so you don't have to keep resetting
-  vector<int> l_bucket(257, -1); // bucket for l-type
-  find_type(s_bucket, s_bucket2, l_bucket, counts);
-
-  // setting L-type and S-type and buckets
+  vector<int> SA(T.size(), -1); // suffix array
   vector<bool> type(T.size());
-  set_type(SA, T, s_bucket, type);
+  SAIS(T, type, SA);
 
-  // fill l-buckets
-  fill_l(SA, T, l_bucket, type);
-
-  // filling S-buckets
-  fill_s(SA, T, s_bucket2, type);
-
-  // // printing -- COMMENTING OUT FOR NOW
-  // for (int i = 0; i < (int)SA.size(); i++) {
-  //   cout << SA[i] << " ";
-  // }
-  // cout << endl;
+  // printing -- commenting out for now
+  for (int i = 0; i < (int)SA.size(); i++) {
+    cout << SA[i] << " ";
+  }
+  cout << endl;
 
   return 0;
 }
@@ -110,7 +96,6 @@ void set_type(vector<int> &SA, vector<int> &T, vector<int> &s_bucket,
   }
 }
 
-
 void fill_l(vector<int> &SA, vector<int> &T, vector<int> &l_bucket,
             vector<bool> &type) {
   for (int i = 0; i < (int)SA.size(); i++) {
@@ -136,4 +121,28 @@ void fill_s(vector<int> &SA, vector<int> &T, vector<int> &s_bucket2,
       }
     }
   }
+}
+
+void SAIS(vector<int> &T, vector<bool> &type, vector<int> &SA) {
+
+  vector<int> counts(256, 0);
+
+  for (int i = 0; i < (int)T.size(); i++) { // detecting numbers in T
+    counts[T[i]]++;
+  }
+
+  vector<int> s_bucket(257, -1); // bucket for s-type
+  vector<int> s_bucket2(
+      257, -1); // bucket for s-type so you don't have to keep resetting
+  vector<int> l_bucket(257, -1); // bucket for l-type
+  find_type(s_bucket, s_bucket2, l_bucket, counts);
+
+  // setting L-type and S-type and buckets
+  set_type(SA, T, s_bucket, type);
+
+  // fill l-buckets
+  fill_l(SA, T, l_bucket, type);
+
+  // filling S-buckets
+  fill_s(SA, T, s_bucket2, type);
 }
