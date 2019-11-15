@@ -29,6 +29,8 @@ void fill_s(vector<int> &SA, vector<int> &T, vector<int> &s_bucket2,
             vector<bool> &type);
 
 void SAIS(vector<int> &T, vector<bool> &type, vector<int> &SA);
+bool compare_LMS(const vector<int> &T, const vector<bool> &type, int previous,
+                 int current);
 
 int main() {
   // string T = "ROADSTARCAT$";
@@ -37,15 +39,13 @@ int main() {
   while (getline(cin, input)) {
     t = t + input;
   }
- 
+
   vector<int> T; // the vector we will run SAIS on. converted string of ints
                  // where each char is represented by an int.
   for (int i = 0; i < (int)t.size(); i++) {
     T.push_back(t[i]++);
   }
   T.push_back(0); // this is the equivalent of appending $ to the end
-
-  
 
   // put print statement here.
 
@@ -56,13 +56,6 @@ int main() {
 
   // //BEGINNING OF STEP 2
   // // give each LMS-substring of T a name
-  // vector<int> T_1(SA.size);
-
-  // // scan SA from L-to-R
-  // for (int i = 0; i < (int)SA.size(); i++){
-  //   // assign lms-substrings names
-
-  // }
 
   // printing -- commenting out for now
   for (int i = 0; i < (int)SA.size(); i++) {
@@ -157,4 +150,47 @@ void SAIS(vector<int> &T, vector<bool> &type, vector<int> &SA) {
 
   // filling S-buckets
   fill_s(SA, T, s_bucket2, type);
+
+  // beginning of step 2
+  vector<int> T_1(SA.size());
+  vector<int> N(SA.size(), -1);
+
+  // to figure out bool LMS
+  vector<bool> LMS(SA.size(), 0);
+  for (int i = 0; i < (int)SA.size(); i++) {
+    if (SA[i] > 0 && type[SA[i] - 1] == L && type[SA[i]] == S) {
+      // we know that LMS can only occur if previous is L type
+      // and current is S type. and b/c you cannot compare T[i] at 0 with
+      // T[i-1] we know (by definition) that T[0] will never be a LMS
+      LMS[i] = 1;
+    }
+  }
+
+  int name = 0;
+  N[SA[0]] = name; // $ -- base case for N
+  name++;          // base case for N
+  int previous = SA[0];
+  // int current = SA[i] IF LMS
+
+  // scan SA from L-to-R
+  for (int i = 1; i < (int)SA.size(); i++) {
+    // assign lms-substrings names
+    if (LMS[i]) {
+      // name++;
+      if (!compare_LMS(T, type, previous, SA[i])) {
+        name++;
+      }
+
+      N[SA[i]] = name;
+      previous = SA[i];
+    }
+  }
+}
+
+bool compare_LMS(const vector<int> &T, const vector<bool> &type, int previous,
+                 int current) {
+
+  // for (int previous)
+
+  return 0;
 }
