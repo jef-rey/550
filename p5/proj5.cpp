@@ -28,7 +28,8 @@ void fill_l(vector<int> &SA, vector<int> &T, vector<int> &l_bucket,
 void fill_s(vector<int> &SA, vector<int> &T, vector<int> &s_bucket2,
             vector<bool> &type);
 
-void SAIS(vector<int> &T, vector<bool> &type, vector<int> &SA);
+// void SAIS(vector<int> &T, vector<bool> &type, vector<int> &SA);
+void SAIS(vector<int> &T, vector<int> &SA);
 bool compare_LMS(const vector<int> &T, const vector<bool> &type, int previous,
                  int current);
 
@@ -50,16 +51,23 @@ int main() {
   // put print statement here.
 
   vector<int> SA(T.size(), -1); // suffix array
-  vector<bool> type(T.size());
+  // vector<bool> type(T.size());
 
-  SAIS(T, type, SA);
+  // SAIS(T, type, SA);
+  SAIS(T, SA);
 
   // //BEGINNING OF STEP 2
   // // give each LMS-substring of T a name
 
   // printing -- commenting out for now
+  // for (int i = 0; i < (int)SA.size(); i++) {
+  //   cout << SA[i] << " ";
+  // }
+  // cout << endl;
+
   for (int i = 0; i < (int)SA.size(); i++) {
-    cout << SA[i] << " ";
+    if(SA[i] >0)
+    {cout << (char)T[SA[i] -1];}
   }
   cout << endl;
 
@@ -128,9 +136,10 @@ void fill_s(vector<int> &SA, vector<int> &T, vector<int> &s_bucket2,
   }
 }
 
-void SAIS(vector<int> &T, vector<bool> &type, vector<int> &SA) {
+void SAIS(vector<int> &T, vector<int> &SA) {
 
   vector<int> counts(256, 0);
+  vector<bool> type(T.size());
 
   for (int i = 0; i < (int)T.size(); i++) { // detecting numbers in T
     counts[T[i]]++;
@@ -152,7 +161,7 @@ void SAIS(vector<int> &T, vector<bool> &type, vector<int> &SA) {
   fill_s(SA, T, s_bucket2, type);
 
   // beginning of step 2
-  vector<int> T_1(SA.size());
+  vector<int> Tone;
   vector<int> N(SA.size(), -1);
 
   // to figure out bool LMS
@@ -168,7 +177,7 @@ void SAIS(vector<int> &T, vector<bool> &type, vector<int> &SA) {
 
   int name = 0;
   N[SA[0]] = name; // $ -- base case for N
-  name++;          // base case for N
+  // name++;          // base case for N
   int previous = SA[0];
   // int current = SA[i] IF LMS
 
@@ -180,17 +189,87 @@ void SAIS(vector<int> &T, vector<bool> &type, vector<int> &SA) {
       if (!compare_LMS(T, type, previous, SA[i])) {
         name++;
       }
-
       N[SA[i]] = name;
       previous = SA[i];
     }
   }
+  // int temp_counter = 0;
+  for (int i = 0; i < (int)N.size(); i++) {
+    if (N[i] != -1) {
+      Tone.push_back(N[i]);
+    }
+  }
+  vector<int> SAone(Tone.size());
+  if (name +1 == (int)Tone.size()) {
+    for (int i = 0; i < (int)Tone.size(); i++) {
+      SAone[Tone[i]] = i;
+    }
+    return;
+  }
+  SAIS(Tone, SAone);
+  find_type(s_bucket, s_bucket2, l_bucket, counts);
+  for (int i = 0; i < (int)SA.size(); i++){
+    SA[i] = -1;
+  }
+int iterator = 0;
+for(int j = 1; j < (int)type.size(); j++){
+  if(type[j] == S && type[j-1] == L){
+    Tone[iterator] = j;
+    iterator++;
+  }
 }
+
+for (int j = (int)SAone.size()-1; j >= 0; j--){
+  int p = Tone[SAone[j]];
+  SA[s_bucket[T[p]]] = p;
+  // cout << "SA[" << s_bucket[T[p]] << "] = " << SA[s_bucket[T[p]]] << endl;
+  s_bucket[T[p]]--;
+  // cout << "SA in that loop " << SA[s_bucket[T[p]]] << endl;
+  // cout << "p: " << p << endl;
+  // cout << "j: " << j << endl;
+  // cout << "SAone[" << j << "] = " << SAone[j] << endl;
+}
+
+fill_l(SA, T, l_bucket, type);
+
+  // filling S-buckets
+  fill_s(SA, T, s_bucket2, type);
+}
+
+bool isStartLMS(int start, int prev) { return start == S && prev == L; }
 
 bool compare_LMS(const vector<int> &T, const vector<bool> &type, int previous,
                  int current) {
 
   // for (int previous)
-
-  return 0;
+  // if T[current] and t[prev] are not the same, dump out
+  // if T[previous+1] and T[current+1]
+  // continue looping  while both previous and current are < T.size
+  // inside the loop, we compare both substrings and if they a != immediately
+  // return
+  // if one of them is the start of a new LMS and other one isnt
+  bool flag = true;
+  if (T[current] != T[previous]) {
+    flag = false;
+  }
+  for (int i = previous + 1, j = current + 1;
+       flag && i < (int)T.size() && j < (int)T.size(); i++, j++) {
+    if (T[i] != T[j]) {
+      flag = false;
+    }
+    //  isStartLMS(type[i], type[i-1]);
+    if (isStartLMS(type[i], type[i - 1]) && isStartLMS(type[j], type[j - 1])) {
+      break; // flag is correctly set, and this is where to stop looking
+    }
+    if (isStartLMS(type[i], type[i - 1]) && !isStartLMS(type[j], type[j - 1])) {
+      flag = false;
+    }
+    if (!isStartLMS(type[i], type[i - 1]) && isStartLMS(type[j], type[j - 1])) {
+      flag = false;
+    }
+  }
+  // cout << "current value " << current << endl;
+  // cout << "previous " << previous << endl;
+  // cout << "the flag is  " << flag << endl;
+  return flag;
 }
