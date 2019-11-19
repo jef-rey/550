@@ -19,19 +19,19 @@ using std::string;
 using std::vector;
 
 void find_type(vector<int> &s_bucket, vector<int> &s_bucket2,
-               vector<int> &l_bucket, vector<int> &counts);
+    vector<int> &l_bucket, vector<int> &counts);
 void set_type(vector<int> &SA, vector<int> &T, vector<int> &s_bucket,
-              vector<bool> &type);
+    vector<bool> &type);
 
 void fill_l(vector<int> &SA, vector<int> &T, vector<int> &l_bucket,
-            vector<bool> &type);
+    vector<bool> &type);
 void fill_s(vector<int> &SA, vector<int> &T, vector<int> &s_bucket2,
-            vector<bool> &type);
+    vector<bool> &type);
 
 // void SAIS(vector<int> &T, vector<bool> &type, vector<int> &SA);
 void SAIS(vector<int> &T, vector<int> &SA);
 bool compare_LMS(const vector<int> &T, const vector<bool> &type, int previous,
-                 int current);
+    int current);
 
 int main() {
   // string T = "ROADSTARCAT$";
@@ -42,7 +42,7 @@ int main() {
   }
 
   vector<int> T; // the vector we will run SAIS on. converted string of ints
-                 // where each char is represented by an int.
+  // where each char is represented by an int.
   for (int i = 0; i < (int)t.size(); i++) {
     T.push_back(t[i]++);
   }
@@ -65,6 +65,7 @@ int main() {
   // }
   // cout << endl;
 
+  // printing BWT
   for (int i = 0; i < (int)SA.size(); i++) {
     if(SA[i] >0)
     {cout << (char)T[SA[i] -1];}
@@ -76,7 +77,7 @@ int main() {
 
 // function to find L and S types for SA
 void find_type(vector<int> &s_bucket, vector<int> &s_bucket2,
-               vector<int> &l_bucket, vector<int> &counts) {
+    vector<int> &l_bucket, vector<int> &counts) {
   int total_count = 0;
   for (int i = 0; i < (int)counts.size(); i++) {
     if (counts[i] > 0) { // $ is a special case
@@ -90,7 +91,7 @@ void find_type(vector<int> &s_bucket, vector<int> &s_bucket2,
 
 // function to set types for L and S
 void set_type(vector<int> &SA, vector<int> &T, vector<int> &s_bucket,
-              vector<bool> &type) {
+    vector<bool> &type) {
   // bool L = 0;
   // bool S = 1;
   type[T.size() - 1] = S; // we know the $ is at the end.
@@ -110,7 +111,7 @@ void set_type(vector<int> &SA, vector<int> &T, vector<int> &s_bucket,
 }
 
 void fill_l(vector<int> &SA, vector<int> &T, vector<int> &l_bucket,
-            vector<bool> &type) {
+    vector<bool> &type) {
   for (int i = 0; i < (int)SA.size(); i++) {
     if ((SA[i] > 0) && (type[SA[i] - 1] == L)) {
       SA[l_bucket[T[SA[i] - 1]]] = SA[i] - 1;
@@ -120,7 +121,7 @@ void fill_l(vector<int> &SA, vector<int> &T, vector<int> &l_bucket,
 }
 
 void fill_s(vector<int> &SA, vector<int> &T, vector<int> &s_bucket2,
-            vector<bool> &type) {
+    vector<bool> &type) {
   for (int i = (int)SA.size() - 1; i >= 0; i--) {
     if (SA[i] == 0) {
       if (type[T.size() - 1] == S) {
@@ -154,7 +155,7 @@ void SAIS(vector<int> &T, vector<int> &SA) {
   // setting L-type and S-type and buckets
   set_type(SA, T, s_bucket, type);
 
-  // fill l-buckets
+  // fill L-buckets
   fill_l(SA, T, l_bucket, type);
 
   // filling S-buckets
@@ -193,12 +194,13 @@ void SAIS(vector<int> &T, vector<int> &SA) {
       previous = SA[i];
     }
   }
-  // int temp_counter = 0;
+
   for (int i = 0; i < (int)N.size(); i++) {
     if (N[i] != -1) {
       Tone.push_back(N[i]);
     }
   }
+
   vector<int> SAone(Tone.size());
   if (name +1 == (int)Tone.size()) {
     for (int i = 0; i < (int)Tone.size(); i++) {
@@ -206,31 +208,33 @@ void SAIS(vector<int> &T, vector<int> &SA) {
     }
     return;
   }
+
   SAIS(Tone, SAone);
   find_type(s_bucket, s_bucket2, l_bucket, counts);
   for (int i = 0; i < (int)SA.size(); i++){
     SA[i] = -1;
   }
-int iterator = 0;
-for(int j = 1; j < (int)type.size(); j++){
-  if(type[j] == S && type[j-1] == L){
-    Tone[iterator] = j;
-    iterator++;
+  
+  int iterator = 0;
+  for(int j = 1; j < (int)type.size(); j++){
+    if(type[j] == S && type[j-1] == L){
+      Tone[iterator] = j;
+      iterator++;
+    }
   }
-}
 
-for (int j = (int)SAone.size()-1; j >= 0; j--){
-  int p = Tone[SAone[j]];
-  SA[s_bucket[T[p]]] = p;
-  // cout << "SA[" << s_bucket[T[p]] << "] = " << SA[s_bucket[T[p]]] << endl;
-  s_bucket[T[p]]--;
-  // cout << "SA in that loop " << SA[s_bucket[T[p]]] << endl;
-  // cout << "p: " << p << endl;
-  // cout << "j: " << j << endl;
-  // cout << "SAone[" << j << "] = " << SAone[j] << endl;
-}
+  for (int j = (int)SAone.size()-1; j >= 0; j--){
+    int p = Tone[SAone[j]];
+    SA[s_bucket[T[p]]] = p;
+    // cout << "SA[" << s_bucket[T[p]] << "] = " << SA[s_bucket[T[p]]] << endl;
+    s_bucket[T[p]]--;
+    // cout << "SA in that loop " << SA[s_bucket[T[p]]] << endl;
+    // cout << "p: " << p << endl;
+    // cout << "j: " << j << endl;
+    // cout << "SAone[" << j << "] = " << SAone[j] << endl;
+  }
 
-fill_l(SA, T, l_bucket, type);
+  fill_l(SA, T, l_bucket, type);
 
   // filling S-buckets
   fill_s(SA, T, s_bucket2, type);
@@ -239,7 +243,7 @@ fill_l(SA, T, l_bucket, type);
 bool isStartLMS(int start, int prev) { return start == S && prev == L; }
 
 bool compare_LMS(const vector<int> &T, const vector<bool> &type, int previous,
-                 int current) {
+    int current) {
 
   // for (int previous)
   // if T[current] and t[prev] are not the same, dump out
@@ -253,7 +257,7 @@ bool compare_LMS(const vector<int> &T, const vector<bool> &type, int previous,
     flag = false;
   }
   for (int i = previous + 1, j = current + 1;
-       flag && i < (int)T.size() && j < (int)T.size(); i++, j++) {
+      flag && i < (int)T.size() && j < (int)T.size(); i++, j++) {
     if (T[i] != T[j]) {
       flag = false;
     }
@@ -273,3 +277,4 @@ bool compare_LMS(const vector<int> &T, const vector<bool> &type, int previous,
   // cout << "the flag is  " << flag << endl;
   return flag;
 }
+
