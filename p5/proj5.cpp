@@ -28,8 +28,7 @@ void fill_l(vector<int> &SA, vector<int> &T, vector<int> &l_bucket,
 void fill_s(vector<int> &SA, vector<int> &T, vector<int> &s_bucket2,
     vector<bool> &type);
 
-// void SAIS(vector<int> &T, vector<bool> &type, vector<int> &SA);
-void SAIS(vector<int> &T, vector<int> &SA);
+void SAIS(vector<int> &T, vector<int> &SA, int alphabet_size);
 bool compare_LMS(const vector<int> &T, const vector<bool> &type, int previous,
     int current);
 
@@ -77,10 +76,7 @@ int main() {
   // vector<bool> type(T.size());
 
   // SAIS(T, type, SA);
-  SAIS(T, SA);
-
-  // //BEGINNING OF STEP 2
-  // // give each LMS-substring of T a name
+  SAIS(T, SA, name+1); // name +1 = alphabet_size
 
 
   // printing BWT
@@ -112,8 +108,6 @@ void find_type(vector<int> &s_bucket, vector<int> &s_bucket2,
 // function to set types for L and S
 void set_type(vector<int> &SA, vector<int> &T, vector<int> &s_bucket,
     vector<bool> &type) {
-  // bool L = 0;
-  // bool S = 1;
   type[T.size() - 1] = S; // we know the $ is at the end.
   for (int i = (int)type.size() - 2; i >= 0; i--) {
     if (T[i] > T[i + 1]) { // check for types
@@ -157,32 +151,33 @@ void fill_s(vector<int> &SA, vector<int> &T, vector<int> &s_bucket2,
   }
 }
 
-void SAIS(vector<int> &T, vector<int> &SA) {
+void SAIS(vector<int> &T, vector<int> &SA, int alphabet_size) {
 
-  //vector<int> counts(256, 0);
-  int largest_char = 0; 
+  //int largest_char = 0; 
   // largest char is going to represent the largest character in the alphabet
   // of T, which at this point (in p5) could be greater than the original 256
   // character count. 
-  for (int i = 0; i < (int)T.size() ; i++){
-    if(T[i] > largest_char){
-      largest_char = T[i];
-    }
-  }
 
-  vector<int> counts(largest_char+1, 0);
+//  for (int i = 0; i < (int)T.size() ; i++){
+//    if(T[i] > largest_char){
+//      largest_char = T[i];
+//    }
+//  }
+
+  //vector<int> counts(largest_char+1, 0);
+  vector<int> counts(alphabet_size, 0);
   vector<bool> type(T.size());
 
   for (int i = 0; i < (int)T.size(); i++) { // detecting numbers in T
     counts[T[i]]++;
   }
 
-  int alphabet_size = 0;
-  for (int i = 0; i < (int)counts.size(); i ++){
-    if(counts[i] > 0){
-      alphabet_size++;
-    }
-  }
+//  int alphabet_size = 0;
+//  for (int i = 0; i < (int)counts.size(); i ++){
+//    if(counts[i] > 0){
+//      alphabet_size++;
+//    }
+//  }
 
   if (alphabet_size  == (int)T.size()) {
     for (int i = 0; i < (int)T.size(); i++) {
@@ -191,12 +186,9 @@ void SAIS(vector<int> &T, vector<int> &SA) {
     return;
   }
 
-  //vector<int> s_bucket(257, -1); // bucket for s-type
-  vector<int> s_bucket(largest_char+1, -1); // bucket for s-type
-  //vector<int> s_bucket2(   257, -1); // bucket for s-type so you don't have to keep resetting
-  vector<int> s_bucket2(largest_char+1, -1); // bucket for s-type so you don't have to keep resetting
-  //vector<int> l_bucket(257, -1); // bucket for l-type
-  vector<int> l_bucket(largest_char+1, -1); // bucket for l-type
+  vector<int> s_bucket(alphabet_size, -1); // bucket for s-type
+  vector<int> s_bucket2(alphabet_size, -1); // bucket for s-type so you don't have to keep resetting
+  vector<int> l_bucket(alphabet_size, -1); // bucket for l-type
   find_type(s_bucket, s_bucket2, l_bucket, counts);
 
   // setting L-type and S-type and buckets
@@ -249,7 +241,7 @@ void SAIS(vector<int> &T, vector<int> &SA) {
 
   vector<int> SAone(Tone.size());
 
-  SAIS(Tone, SAone);
+  SAIS(Tone, SAone, name + 1);// name + 1 = alphabet_size
 
   find_type(s_bucket, s_bucket2, l_bucket, counts);
   for (int i = 0; i < (int)SA.size(); i++){
