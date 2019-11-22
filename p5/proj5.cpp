@@ -205,7 +205,6 @@ void SAIS(vector<int> &T, vector<int> &SA) {
 
   int name = 0;
   N[SA[0]] = name; // $ -- base case for N
-  // name++;          // base case for N
   int previous = SA[0];
   // int current = SA[i] IF LMS
 
@@ -213,7 +212,6 @@ void SAIS(vector<int> &T, vector<int> &SA) {
   for (int i = 1; i < (int)SA.size(); i++) {
     // assign lms-substrings names
     if (LMS[i]) {
-      // name++;
       if (!compare_LMS(T, type, previous, SA[i])) {
         name++;
       }
@@ -232,12 +230,6 @@ void SAIS(vector<int> &T, vector<int> &SA) {
   vector<int> SAone(Tone.size());
 
   SAIS(Tone, SAone);
-//  if (name +1 == (int)Tone.size()) {
-//    for (int i = 0; i < (int)Tone.size(); i++) {
-//      SAone[Tone[i]] = i;
-//    }
-//    return;
-//  }
 
   find_type(s_bucket, s_bucket2, l_bucket, counts);
   for (int i = 0; i < (int)SA.size(); i++){
@@ -290,7 +282,6 @@ bool compare_LMS(const vector<int> &T, const vector<bool> &type, int previous,
     if (T[i] != T[j]) {
       flag = false;
     }
-    //  isStartLMS(type[i], type[i-1]);
     if (isStartLMS(type[i], type[i - 1]) && isStartLMS(type[j], type[j - 1])) {
       break; // flag is correctly set, and this is where to stop looking
     }
@@ -301,9 +292,6 @@ bool compare_LMS(const vector<int> &T, const vector<bool> &type, int previous,
       flag = false;
     }
   }
-  // cout << "current value " << current << endl;
-  // cout << "previous " << previous << endl;
-  // cout << "the flag is  " << flag << endl;
   return flag;
 }
 
