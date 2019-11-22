@@ -1,5 +1,5 @@
 /**
- *  p4- the implementing SAIS
+ *  p5- the implementing SAIS
  *  Jeff Anderson
  *  CSCI 550
  *  Fall 2019
@@ -139,17 +139,44 @@ void fill_s(vector<int> &SA, vector<int> &T, vector<int> &s_bucket2,
 
 void SAIS(vector<int> &T, vector<int> &SA) {
 
-  vector<int> counts(256, 0);
+  //vector<int> counts(256, 0);
+  int largest_char = 0; 
+  // largest char is going to represent the largest character in the alphabet
+  // of T, which at this point (in p5) could be greater than the original 256
+  // character count. 
+  for (int i = 0; i < (int)T.size() ; i++){
+    if(T[i] > largest_char){
+      largest_char = T[i];
+    }
+  }
+
+  vector<int> counts(largest_char+1, 0);
   vector<bool> type(T.size());
 
   for (int i = 0; i < (int)T.size(); i++) { // detecting numbers in T
     counts[T[i]]++;
   }
 
-  vector<int> s_bucket(257, -1); // bucket for s-type
-  vector<int> s_bucket2(
-      257, -1); // bucket for s-type so you don't have to keep resetting
-  vector<int> l_bucket(257, -1); // bucket for l-type
+  int alphabet_size = 0;
+  for (int i = 0; i < (int)counts.size(); i ++){
+    if(counts[i] > 0){
+      alphabet_size++;
+    }
+  }
+
+  if (alphabet_size  == (int)T.size()) {
+    for (int i = 0; i < (int)T.size(); i++) {
+      SA[T[i]] = i;
+    }
+    return;
+  }
+
+  //vector<int> s_bucket(257, -1); // bucket for s-type
+  vector<int> s_bucket(largest_char+1, -1); // bucket for s-type
+  //vector<int> s_bucket2(   257, -1); // bucket for s-type so you don't have to keep resetting
+  vector<int> s_bucket2(largest_char+1, -1); // bucket for s-type so you don't have to keep resetting
+  //vector<int> l_bucket(257, -1); // bucket for l-type
+  vector<int> l_bucket(largest_char+1, -1); // bucket for l-type
   find_type(s_bucket, s_bucket2, l_bucket, counts);
 
   // setting L-type and S-type and buckets
@@ -201,15 +228,17 @@ void SAIS(vector<int> &T, vector<int> &SA) {
     }
   }
 
+
   vector<int> SAone(Tone.size());
-  if (name +1 == (int)Tone.size()) {
-    for (int i = 0; i < (int)Tone.size(); i++) {
-      SAone[Tone[i]] = i;
-    }
-    return;
-  }
 
   SAIS(Tone, SAone);
+//  if (name +1 == (int)Tone.size()) {
+//    for (int i = 0; i < (int)Tone.size(); i++) {
+//      SAone[Tone[i]] = i;
+//    }
+//    return;
+//  }
+
   find_type(s_bucket, s_bucket2, l_bucket, counts);
   for (int i = 0; i < (int)SA.size(); i++){
     SA[i] = -1;
