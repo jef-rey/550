@@ -33,7 +33,6 @@ bool compare_LMS(const vector<int> &T, const vector<bool> &type, int previous,
     int current);
 
 int main() {
-  // string T = "ROADSTARCAT$";
   string input;
   string t = "";
   while (getline(cin, input)) {
@@ -59,31 +58,21 @@ int main() {
   }
 
 
-  //  for (int i = 0; i < (int)T.size(); i++) { // detecting numbers in T
-  //    counts[T[i]]++;
-  //  }
-
-
   for (int i = 0; i < (int)t.size(); i++) {
     T.push_back(alphabet[t[i]]);
-
   }
+
   T.push_back(0); // this is the equivalent of appending $ to the end
 
-  // put print statement here.
-
   vector<int> SA(T.size(), -1); // suffix array
-  // vector<bool> type(T.size());
 
-  // SAIS(T, type, SA);
   SAIS(T, SA, name+1); // name +1 = alphabet_size
-
 
   // printing BWT
   for (int i = 0; i < (int)SA.size(); i++) {
     if(SA[i] >0){
       //{cout << (char)T[SA[i] -1];}
-      cout <<    ( char)r_alphabet[T[SA[i]-1]];
+      cout << (char)r_alphabet[T[SA[i]-1]];
     }
   }
   cout << endl;
@@ -151,20 +140,9 @@ void fill_s(vector<int> &SA, vector<int> &T, vector<int> &s_bucket2,
   }
 }
 
+// function to induce sort suffix array
 void SAIS(vector<int> &T, vector<int> &SA, int alphabet_size) {
 
-  //int largest_char = 0; 
-  // largest char is going to represent the largest character in the alphabet
-  // of T, which at this point (in p5) could be greater than the original 256
-  // character count. 
-
-//  for (int i = 0; i < (int)T.size() ; i++){
-//    if(T[i] > largest_char){
-//      largest_char = T[i];
-//    }
-//  }
-
-  //vector<int> counts(largest_char+1, 0);
   vector<int> counts(alphabet_size, 0);
   vector<bool> type(T.size());
 
@@ -172,13 +150,10 @@ void SAIS(vector<int> &T, vector<int> &SA, int alphabet_size) {
     counts[T[i]]++;
   }
 
-//  int alphabet_size = 0;
-//  for (int i = 0; i < (int)counts.size(); i ++){
-//    if(counts[i] > 0){
-//      alphabet_size++;
-//    }
-//  }
 
+  // alphabet_size is going to represent the largest character in the alphabet
+  // of T, which at this point (in p5) could be greater than the original 256
+  // character count. 
   if (alphabet_size  == (int)T.size()) {
     for (int i = 0; i < (int)T.size(); i++) {
       SA[T[i]] = i;
@@ -238,7 +213,6 @@ void SAIS(vector<int> &T, vector<int> &SA, int alphabet_size) {
     }
   }
 
-
   vector<int> SAone(Tone.size());
 
   SAIS(Tone, SAone, name + 1);// name + 1 = alphabet_size
@@ -259,12 +233,7 @@ void SAIS(vector<int> &T, vector<int> &SA, int alphabet_size) {
   for (int j = (int)SAone.size()-1; j >= 0; j--){
     int p = Tone[SAone[j]];
     SA[s_bucket[T[p]]] = p;
-    // cout << "SA[" << s_bucket[T[p]] << "] = " << SA[s_bucket[T[p]]] << endl;
     s_bucket[T[p]]--;
-    // cout << "SA in that loop " << SA[s_bucket[T[p]]] << endl;
-    // cout << "p: " << p << endl;
-    // cout << "j: " << j << endl;
-    // cout << "SAone[" << j << "] = " << SAone[j] << endl;
   }
 
   fill_l(SA, T, l_bucket, type);
@@ -273,8 +242,10 @@ void SAIS(vector<int> &T, vector<int> &SA, int alphabet_size) {
   fill_s(SA, T, s_bucket2, type);
 }
 
+//helper function for compare_LMS
 bool isStartLMS(int start, int prev) { return start == S && prev == L; }
 
+// function compares LMS substrings to see if they are the same
 bool compare_LMS(const vector<int> &T, const vector<bool> &type, int previous,
     int current) {
 
@@ -282,9 +253,8 @@ bool compare_LMS(const vector<int> &T, const vector<bool> &type, int previous,
   // if T[current] and t[prev] are not the same, dump out
   // if T[previous+1] and T[current+1]
   // continue looping  while both previous and current are < T.size
-  // inside the loop, we compare both substrings and if they a != immediately
-  // return
-  // if one of them is the start of a new LMS and other one isnt
+  // inside the loop, we compare both substrings and if they are != immediately
+  // return if one of them is the start of a new LMS and other one isnt
   bool flag = true;
   if (T[current] != T[previous]) {
     flag = false;
