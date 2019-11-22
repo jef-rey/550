@@ -43,8 +43,31 @@ int main() {
 
   vector<int> T; // the vector we will run SAIS on. converted string of ints
   // where each char is represented by an int.
+
+  vector<int> alphabet(256, 0);
+  for (int i = 0; i <(int)t.size(); i++){
+    alphabet[t[i]] = 1;
+  }
+
+  int name = 0;
+  vector<int> r_alphabet;// reverse alphabet
+  r_alphabet.push_back(-1);//garbage -- 0 is not a valid pos to look at
+  for (int i = 0; i < (int)alphabet.size(); i++){
+    if (alphabet[i] > 0){
+      alphabet[i] = ++name;
+      r_alphabet.push_back(i);
+    }
+  }
+
+
+  //  for (int i = 0; i < (int)T.size(); i++) { // detecting numbers in T
+  //    counts[T[i]]++;
+  //  }
+
+
   for (int i = 0; i < (int)t.size(); i++) {
-    T.push_back(t[i]++);
+    T.push_back(alphabet[t[i]]);
+
   }
   T.push_back(0); // this is the equivalent of appending $ to the end
 
@@ -59,16 +82,13 @@ int main() {
   // //BEGINNING OF STEP 2
   // // give each LMS-substring of T a name
 
-  // printing -- commenting out for now
-  // for (int i = 0; i < (int)SA.size(); i++) {
-  //   cout << SA[i] << " ";
-  // }
-  // cout << endl;
 
   // printing BWT
   for (int i = 0; i < (int)SA.size(); i++) {
-    if(SA[i] >0)
-    {cout << (char)T[SA[i] -1];}
+    if(SA[i] >0){
+      //{cout << (char)T[SA[i] -1];}
+      cout <<    ( char)r_alphabet[T[SA[i]-1]];
+    }
   }
   cout << endl;
 
@@ -235,7 +255,7 @@ void SAIS(vector<int> &T, vector<int> &SA) {
   for (int i = 0; i < (int)SA.size(); i++){
     SA[i] = -1;
   }
-  
+
   int iterator = 0;
   for(int j = 1; j < (int)type.size(); j++){
     if(type[j] == S && type[j-1] == L){
